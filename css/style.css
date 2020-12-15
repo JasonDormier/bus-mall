@@ -1,0 +1,30 @@
+body{
+  background-color:lavender;
+
+}
+
+h1{
+  font-size: 3em;
+  text-align: center;
+}
+
+h3{
+  font-size: 1.5em;
+  text-align: center;
+}
+
+section{
+  width: 980px;
+  margin: 0 auto;
+  border: 5px solid darkblue;
+}
+#button{
+  background-color: blueviolet;
+  width: 100px;
+  height: 30px;
+}
+
+img{
+  width: 300px;
+  margin: 10px;
+}
