@@ -11,12 +11,12 @@ const imgOneElement = document.getElementById('img-one');
 const imgTwoElement = document.getElementById('img-two');
 const imgThreeElement = document.getElementById('img-three');
 const button = document.getElementById('button');
-const resultsList = document.getElementById('results');
+const ctx = document.getElementById('myChart').getContext('2d');
 
 let maxClicksAllowed = 25;
 let actualClicks = 0;
 
-let a, b, c, tempInd, liElement;
+let a, b, c, tempInd;
 
 //GOAT CONSTRUCTOR
 function Product(name, src = 'jpg') {
@@ -52,8 +52,6 @@ new Product('sweep', 'png');
 new Product('water-can');
 new Product('wine-glass');
 
-
-
 //DETERMINE WHICH PRODUCTS GET VIEWED
 
 //document - this came from MDN docs math.random - link in readme
@@ -74,20 +72,18 @@ function pop() {
   a = imgHolder.pop();
   b = imgHolder.pop();
   c = imgHolder.pop();
-  console.log(`a:${a}, b:${b}, c:${c}`);
-
+  //console.log(`a:${a}, b:${b}, c:${c}`);
 }
 
 function renderProducts() {
-
   //while imgHolder array is less then 3 do stuff
   while (imgHolder.length <= 2) {
     //do while temp index number is the same as var a, b, or c, otherwise move along
     do {
       //assign random index of allProducts to var
       tempInd = getRandomIndex(allProducts.length);
-      console.log(`this is temp index ${tempInd}`);
-      console.log(imgHolder);
+      //console.log(`this is temp index ${tempInd}`);
+      //console.log(imgHolder);
 
       //while imgHolder array includes a number already in our imgHolder get new number otherwise move along.
       while (imgHolder.includes(tempInd)) {
@@ -106,7 +102,7 @@ function renderProducts() {
   productViews(imgTwoElement, imgHolder[1]);
   productViews(imgThreeElement, imgHolder[2]);
 }
-
+let buttonDiv = document.createElement('div');
 //event handler
 function eventClick(event) {
   actualClicks++;
@@ -124,51 +120,65 @@ function eventClick(event) {
   renderProducts();
 
   if (actualClicks === maxClicksAllowed) {
-    let buttonDiv = document.createElement('div');
-    buttonDiv.textContent = 'Push Me';
-    button.appendChild(buttonDiv);
-  }
 
-  //validation for when we hit our max clicks overall.
-  for (let j = 0; j < allProducts.length; j++) {
-    //reassign image src properties - call the function again
-    if (actualClicks === maxClicksAllowed) {
-      //WHEN WE HT OUR MAX CLICKS
-      //1, remove eventlisteners
+    container.removeEventListener('click', eventClick);
+    button.addEventListener('click', buttonClick);
 
-      container.removeEventListener('click', eventClick);
-
-      //2. Show results - render one list with name, views, and votes.
-      //create element
-      liElement = document.createElement('li');
-      //give it content
-      liElement.textContent = `${allProducts[j].name} was viewed ${allProducts[j].views} and was clicked ${allProducts[j].votes}`;
-      //append it to the dom
-      resultsList.appendChild(liElement);
-
-
-    }
   }
 }
 
 function buttonClick() {
   console.log('View Results');
+  renderChart();
 
 }
-
-
-
 renderProducts();
-/* if (actualClicks === maxClicksAllowed) { */
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JSCHARTS
+//array of clicks
+//array of  views
+//array of names
+function renderChart() {
+  let namesArray = [];
+  let votesArray = [];
+  let viewsArray = [];
 
+  for (let i = 0; i < allProducts.length; i++) {
+    namesArray.push(allProducts[i].name);
+    votesArray.push(allProducts[i].votes);
+    viewsArray.push(allProducts[i].views);
+    console.log(`
+    names array: ${namesArray}
+    votes array: ${votesArray}
+    views aray:${viewsArray}`);
+  }
 
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: namesArray,
+      datasets: [{
+        label: 'Number of Votes',
+        data: votesArray,
+        backgroundColor: 'rgba(72, 61, 139, 0.6)',
+      },
+      {
+        label: 'Number of Views',
+        data: viewsArray,
+        backgroundColor: 'rgba(11, 7, 37, 0.6)',
+      },]
 
-
-
+    },
+    options: {
+      responsive: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+}
 //event listener attached to the containter
 container.addEventListener('click', eventClick);
-button.addEventListener('click', buttonClick);
-
-
-
-
