@@ -1,22 +1,22 @@
 'use strict';
 
 //global varibles
-//all products array
-const allProducts = [];
-let imgHolder = [];
-
-//get some id's from DOM
 const container = document.getElementById('container');
 const imgOneElement = document.getElementById('img-one');
 const imgTwoElement = document.getElementById('img-two');
 const imgThreeElement = document.getElementById('img-three');
 const button = document.getElementById('button');
 const ctx = document.getElementById('myChart').getContext('2d');
+const retrievedProducts = localStorage.getItem('products');
 
+//Varibles that change
 let maxClicksAllowed = 25;
 let actualClicks = 0;
-
 let a, b, c, tempInd;
+
+//all products array
+let allProducts = [];
+let imgHolder = [];
 
 //GOAT CONSTRUCTOR
 function Product(name, src = 'jpg') {
@@ -27,31 +27,43 @@ function Product(name, src = 'jpg') {
   allProducts.push(this);
 }
 
-//src name/alt/title views and clicks
-//push the instances into the array
+Product.prototype.logger = function () {
+  console.log(this);
 
-//INSTANSATIONS
-new Product('bag');
-new Product('banana');
-new Product('bathroom');
-new Product('boots');
-new Product('breakfast');
-new Product('bubblegum');
-new Product('chair');
-new Product('cthulhu');
-new Product('dog-duck');
-new Product('dragon');
-new Product('pen');
-new Product('pet-sweep');
-new Product('scissors');
-new Product('shark');
-new Product('tauntaun');
-new Product('unicorn');
-new Product('usb', 'gif');
-new Product('sweep', 'png');
-new Product('water-can');
-new Product('wine-glass');
+};
 
+Product.prototype.capitalize = function () {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
+if (retrievedProducts) {
+  //this will break the code if we have no local storage with no if statement
+  allProducts = JSON.parse(retrievedProducts);
+  console.log(allProducts);
+} else {
+
+  //INSTANSATIONS
+  new Product('bag');
+  new Product('banana');
+  new Product('bathroom');
+  new Product('boots');
+  new Product('breakfast');
+  new Product('bubblegum');
+  new Product('chair');
+  new Product('cthulhu');
+  new Product('dog-duck');
+  new Product('dragon');
+  new Product('pen');
+  new Product('pet-sweep');
+  new Product('scissors');
+  new Product('shark');
+  new Product('tauntaun');
+  new Product('unicorn');
+  new Product('usb', 'gif');
+  new Product('sweep', 'png');
+  new Product('water-can');
+  new Product('wine-glass');
+}
 //DETERMINE WHICH PRODUCTS GET VIEWED
 
 //document - this came from MDN docs math.random - link in readme
@@ -102,8 +114,7 @@ function renderProducts() {
   productViews(imgTwoElement, imgHolder[1]);
   productViews(imgThreeElement, imgHolder[2]);
 }
-let buttonDiv = document.createElement('div');
-//event handler
+
 function eventClick(event) {
   actualClicks++;
   let clickedProduct = event.target.title;
@@ -124,6 +135,13 @@ function eventClick(event) {
     container.removeEventListener('click', eventClick);
     button.addEventListener('click', buttonClick);
 
+    //save to local storage  to persist completed datasets
+    const stringifiedProducts = JSON.stringify(allProducts); //put the products in a box
+
+    localStorage.setItem('products', stringifiedProducts);//need a key and value pair in a string
+
+
+
   }
 }
 
@@ -132,18 +150,14 @@ function buttonClick() {
   renderChart();
 
 }
-renderProducts();
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JSCHARTS
-//array of clicks
-//array of  views
-//array of names
+//~~~~~~~~~JSCHARTS~~~~~~~~~~~~//
 function renderChart() {
   let namesArray = [];
   let votesArray = [];
   let viewsArray = [];
 
   for (let i = 0; i < allProducts.length; i++) {
-    namesArray.push(allProducts[i].name);
+    namesArray.push(allProducts[i].name.capitalize());
     votesArray.push(allProducts[i].votes);
     viewsArray.push(allProducts[i].views);
     console.log(`
@@ -180,5 +194,7 @@ function renderChart() {
     }
   });
 }
+
+renderProducts();
 //event listener attached to the containter
 container.addEventListener('click', eventClick);

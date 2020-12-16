@@ -23,6 +23,9 @@ section{
   border: 5px solid darkslateblue;
   border-radius: 10px;
 }
+section:last-child{
+  border: none;
+}
 
 #button{
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
